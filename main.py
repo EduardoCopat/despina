@@ -24,10 +24,10 @@ class NeptuneElement:
             event_name = event_script["EVENT"]
             if(event_name != currentEvent):
                 currentEvent = event_name
-                source_code = ""
+                source_code = "\n"
             else:
                 if(event_script["TEXT"] != None):
-                    source_code = "\r\n" + source_code + event_script["TEXT"]
+                    source_code =  source_code + event_script["TEXT"] + "\n"
             json_events[event_name] = source_code.encode()
 
         json_object["Events_scripts"] = json_events
@@ -98,10 +98,17 @@ for script in events_scripts:
 
     
 def writeFile(file_name, element):
+    if(element.id == "00004"):
+        print("a")
     jsonFile = open(file_name + ".json","w+", encoding="utf-8")
-    foo = element.to_json()
-    asd =  "\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\nosDetailOnline.setVisible(true);// Update DataModelData.Update(MasterLFA1,\"LIFNR\",modeloPageDetail.oData.LIFNR,modelDeltaLFA1.oData[0]);ModelData.Update(MasterADRC,\"ADDRNUMBER\",modeloPageDetail.oData.ADRNR,modelDeltaADRC.oData[0]);ModelData.Update(MasterLFM1,\"LIFNR\",modeloPageDetail.oData.LIFNR,modelDeltaLFM1.oData[0]);ModelData.Update(MasterBank,\"LIFNR\",modeloPageDetail.oData.LIFNR,modelDeltaBank.oData);// Set Customer DatasetDataVendor(modeloPageDetail.oData);// Save DatasetCacheMasterLFA1();setCacheMasterADRC();setCacheMasterLFM1();setCacheMasterBank();oApp.setBusy(false);".encode()
-    json.dump(foo, jsonFile, sort_keys=True, indent=4, ensure_ascii=False)
+    foo = json.dumps(element.to_json(), sort_keys=True, indent=4, ensure_ascii=False)
+
+    asd = "\n".join(foo.split("\\n"))
+    
+    asd.replace('\"', '"')
+
+
+    jsonFile.write(asd)
     jsonFile.close()
 
 def createFile(path, element):

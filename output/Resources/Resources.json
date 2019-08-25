@@ -232,12 +232,12 @@ binding.filter([filter]);
         "press": "getOnlineMasterList();
 "
     },
-    "FIELD_ID": "00001",
+    "FIELD_ID": "00002",
     "FIELD_LABEL": null,
-    "FIELD_NAME": "HTML5 Document",
+    "FIELD_NAME": "Resources",
     "FIELD_PARENT": "00000",
-    "FIELD_POS": "00001",
-    "FIELD_TYPE": "HTML5 DOC",
+    "FIELD_POS": "00148",
+    "FIELD_TYPE": "RESOURCES",
     "FLAG1": null,
     "FLAG2": null,
     "FLAG3": null,
