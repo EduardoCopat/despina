@@ -1,24 +1,39 @@
 import xmltodict
 import json
 import os
-
+from collections import OrderedDict
 
 elements = []
 
 class NeptuneElement:
-  def __init__(self):
-    self.id = None
-    self.parent = None
-    self.object = None
-    self.isContainer = False
-    self.attributes = []
+    def __init__(self):
+        self.id = None
+        self.parent = None
+        self.object = None
+        self.isContainer = False
+        self.attributes = []
+        
+    def to_json(self):
+        json_object = self.object.copy()
+        json_attributes = OrderedDict()
+        for attribute in attributes:
+            group = attribute["GROUPING"]
+            
+            groupAttributes = json_attributes.get(group)
+            if(groupAttributes == None):
+                json_attributes[str(group)] = OrderedDict() 
+            
+            json_attributes[str(group)][attribute["ATTRIBUTE"]] = attribute["VALUE"]
+
+        json_object["Attributes"] = json_attributes
+        return json.dumps(json_object, sort_keys=True, indent=4)
+
+
 
 def findInElements(elements, id):
     for element in elements:
         if element.id == id:
             return element
-
-print("This line will be printed.")
 
 file = open("ZEC_NAD_TRAINING03_VENDOR.xml", "r")
 contents = file.read()
@@ -51,7 +66,7 @@ for attribute in attributes:
     
 def writeFile(file_name, element):
     jsonFile = open(file_name + ".json","w+")
-    jsonFile.write(json.dumps(element.object, sort_keys=True, indent=4))
+    jsonFile.write(element.to_json())
     jsonFile.close()
 
 def createFile(path, element):
@@ -68,7 +83,6 @@ def createFile(path, element):
 
 # define the name of the directory to be created
 path = os.getcwd() + "\\output"
-
 
 try:
     os.mkdir(path)
