@@ -1,5 +1,7 @@
 import xmltodict
 import json
+import os
+
 
 elements = []
 
@@ -8,6 +10,7 @@ class NeptuneElement:
     self.id = None
     self.parent = None
     self.object = None
+    self.isContainer = False
     self.attributes = []
 
 def findInElements(elements, id):
@@ -35,6 +38,8 @@ for object in objects:
     element.id = object["FIELD_ID"]
     element.parent = object["FIELD_PARENT"]
     element.object = object
+    if(element.object["IS_CONTAINER"] == "X"):
+        element.isContainer == True
     elements.append(element)
 
 currentElement = None
@@ -43,18 +48,32 @@ for attribute in attributes:
         currentElement = findInElements(elements, attribute["FIELD_ID"])
     currentElement.attributes.append(attribute)
 
-
-
     
+def writeFile(file_name, element):
+    jsonFile = open(file_name + ".json","w+")
+    jsonFile.write(json.dumps(element.object, sort_keys=True, indent=4))
+    jsonFile.close()
 
-nep = NeptuneElement()
-nep.id = "00080"
+def createFile(path, element):
+    field_name = element.object["FIELD_NAME"]
+   
+    container_path = path + "\\" + field_name
+    os.mkdir(container_path)
+    writeFile(container_path + "\\" + field_name, element)
+    for child in elements:
+        if element.id == child.parent:
+            createFile(container_path, child)
 
 
 
-jsonFile = open("a.json","w+")
-for element in elements:
-    jsonFile.write(json.dumps(element.object))
+# define the name of the directory to be created
+path = os.getcwd() + "\\output"
 
-jsonFile.close()
 
+try:
+    os.mkdir(path)
+    for root in elements:
+        if(root.parent == "00000"):
+            createFile(path, root)
+except OSError:
+    print ("Creation of the directory %s failed" % path)
